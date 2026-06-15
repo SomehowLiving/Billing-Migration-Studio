@@ -17,7 +17,7 @@ from starlette.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr, Field
 from sqlalchemy.orm import Session
 
-from database import Base, engine, get_db, SessionLocal
+from database import Base, engine, get_db, SessionLocal, ensure_schema
 from models import (
     User, DataSource, MappingTemplate, MigrationRun, MigrationRecord,
     MigrationLog, Customer, Subscription, Contract, OnboardingProject
@@ -667,7 +667,7 @@ app.add_middleware(
 
 @app.on_event("startup")
 def on_startup():
-    Base.metadata.create_all(bind=engine)
+    ensure_schema()
     db = SessionLocal()
     try:
         seed_admin(db)
