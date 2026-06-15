@@ -26,18 +26,51 @@ export default function NewMigration() {
   const [running, setRunning] = useState(false);
   const [saveOpen, setSaveOpen] = useState(false);
   const [templateName, setTemplateName] = useState("");
+  const [pageError, setPageError] = useState("");
+  const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
-    api.get("/sources").then((r) => setSources(r.data));
-    api.get("/schema/canonical").then((r) => setCanonical(r.data.fields));
+    let mounted = true;
+    Promise.all([
+      api.get("/sources"),
+      api.get("/schema/canonical"),
+    ])
+      .then(([sourcesRes, schemaRes]) => {
+        if (!mounted) return;
+        setSources(sourcesRes.data);
+        setCanonical(schemaRes.data.fields);
+      })
+      .catch((error) => {
+        if (!mounted) return;
+        setPageError(formatApiError(error));
+      })
+      .finally(() => {
+        if (mounted) setInitialLoading(false);
+      });
+    return () => { mounted = false; };
   }, []);
 
   useEffect(() => {
-    if (!sourceId) { setSourceData(null); return; }
-    api.get(`/sources/${sourceId}`).then((r) => {
-      setSourceData(r.data);
-      setMappings(r.data.suggested_mapping || {});
-    });
+    let mounted = true;
+    if (!sourceId) {
+      setSourceData(null);
+      setMappings({});
+      return () => { mounted = false; };
+    }
+    setPageError("");
+    api.get(`/sources/${sourceId}`)
+      .then((r) => {
+        if (!mounted) return;
+        setSourceData(r.data);
+        setMappings(r.data.suggested_mapping || {});
+      })
+      .catch((error) => {
+        if (!mounted) return;
+        setSourceData(null);
+        setMappings({});
+        setPageError(formatApiError(error));
+      });
+    return () => { mounted = false; };
   }, [sourceId]);
 
   const headers = sourceData?.headers || [];
@@ -110,6 +143,11 @@ export default function NewMigration() {
 
       <div className="grid lg:grid-cols-3 gap-3">
         <div className="lg:col-span-2 space-y-3">
+          {pageError && (
+            <div className="border border-rose-200 bg-rose-50 text-rose-700 px-4 py-3 text-sm">
+              {pageError}
+            </div>
+          )}
           <div className="border border-neutral-200 bg-white p-5">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
@@ -119,12 +157,20 @@ export default function NewMigration() {
               <div>
                 <Label className="text-xs font-mono uppercase tracking-[0.2em]">Data Source</Label>
                 <Select value={sourceId} onValueChange={setSourceId}>
-                  <SelectTrigger data-testid="source-select" className="mt-1.5">
+                  <SelectTrigger
+                    data-testid="source-select"
+                    className="mt-1.5 h-11 rounded-xl border-neutral-200 bg-neutral-50 px-4 text-sm shadow-sm"
+                  >
                     <SelectValue placeholder="Select a source" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="rounded-xl">
                     {sources.map((s) => (
-                      <SelectItem key={s.id} value={s.id} data-testid={`source-option-${s.id}`}>
+                      <SelectItem
+                        key={s.id}
+                        value={s.id}
+                        data-testid={`source-option-${s.id}`}
+                        className="px-4 py-2.5"
+                      >
                         {s.name} ({s.row_count})
                       </SelectItem>
                     ))}
@@ -134,17 +180,36 @@ export default function NewMigration() {
               <div>
                 <Label className="text-xs font-mono uppercase tracking-[0.2em]">Mode</Label>
                 <Select value={mode} onValueChange={setMode}>
-                  <SelectTrigger data-testid="mode-select" className="mt-1.5"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="dry_run" data-testid="mode-dry-run">Dry Run (validate only)</SelectItem>
-                    <SelectItem value="actual" data-testid="mode-actual">Actual (write records)</SelectItem>
+                  <SelectTrigger
+                    data-testid="mode-select"
+                    className="mt-1.5 h-11 rounded-xl border-neutral-200 bg-neutral-50 px-4 text-sm shadow-sm"
+                  >
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl">
+                    <SelectItem value="dry_run" data-testid="mode-dry-run" className="px-4 py-2.5">
+                      Dry Run (validate only)
+                    </SelectItem>
+                    <SelectItem value="actual" data-testid="mode-actual" className="px-4 py-2.5">
+                      Actual (write records)
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
           </div>
 
-          {sourceData && (
+          {initialLoading ? (
+            <div className="border border-neutral-200 bg-white p-8">
+              <div className="h-6 w-48 bg-neutral-200 animate-pulse" />
+              <div className="mt-4 h-4 w-72 bg-neutral-200 animate-pulse" />
+              <div className="mt-6 space-y-3">
+                <div className="h-12 bg-neutral-100 animate-pulse" />
+                <div className="h-12 bg-neutral-100 animate-pulse" />
+                <div className="h-12 bg-neutral-100 animate-pulse" />
+              </div>
+            </div>
+          ) : sourceData ? (
             <>
               <div className="border border-neutral-200 bg-white">
                 <div className="px-5 py-4 border-b border-neutral-200 flex items-center justify-between">
@@ -255,6 +320,10 @@ export default function NewMigration() {
                 </TabsContent>
               </Tabs>
             </>
+          ) : (
+            <div className="border border-dashed border-neutral-300 bg-white p-10 text-sm text-neutral-500">
+              Select a source to configure mappings.
+            </div>
           )}
         </div>
 

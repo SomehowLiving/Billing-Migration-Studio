@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   Gauge, Database, Stack, ArrowsLeftRight, Receipt, SignOut, Users, Checks,
 } from "@phosphor-icons/react";
@@ -15,7 +15,7 @@ const navItems = [
   { to: "/customers", label: "Customers", icon: Users, tid: "nav-customers" },
 ];
 
-export default function Layout({ children }) {
+export default function Layout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -84,7 +84,9 @@ export default function Layout({ children }) {
         </div>
       </aside>
       <main className="flex-1 min-w-0">
-        <div className="px-8 py-8 max-w-[1400px]">{children}</div>
+        <div className="px-8 py-8 max-w-[1400px]">
+          <Outlet />
+        </div>
       </main>
       <Toaster richColors closeButton position="top-right" />
     </div>

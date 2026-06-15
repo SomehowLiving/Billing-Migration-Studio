@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { api, formatApiError } from "../lib/api";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Plus, Trash, UploadSimple, ArrowRight, FileCsv, CreditCard, Database, Buildings } from "@phosphor-icons/react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { useAuth } from "../context/AuthContext";
 
 export default function DataSources() {
+  const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const [sources, setSources] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,6 +18,7 @@ export default function DataSources() {
   const [stripeOpen, setStripeOpen] = useState(false);
   const [stripeLimit, setStripeLimit] = useState(20);
   const [uploading, setUploading] = useState(false);
+  const [selectedFileName, setSelectedFileName] = useState("");
   const fileRef = useRef(null);
 
   const load = () => {
@@ -108,10 +110,19 @@ export default function DataSources() {
               </DialogHeader>
               <div className="space-y-3 pt-2">
                 <Label className="text-xs font-mono uppercase tracking-[0.2em]">File</Label>
-                <Input ref={fileRef} type="file" accept=".csv,.tsv,.txt" data-testid="csv-file-input" />
+                <Input
+                  ref={fileRef}
+                  type="file"
+                  accept=".csv,.tsv,.txt"
+                  data-testid="csv-file-input"
+                  onChange={(e) => setSelectedFileName(e.target.files?.[0]?.name || "")}
+                />
                 <div className="text-xs text-neutral-500">Auto-detects delimiter, encoding and schema.</div>
               </div>
-              <DialogFooter>
+              <DialogFooter className="items-center justify-between">
+                <div className="text-xs font-mono text-neutral-500 truncate max-w-[18rem]" data-testid="selected-file-name">
+                  {selectedFileName ? `Selected: ${selectedFileName}` : "No file selected"}
+                </div>
                 <Button onClick={handleUpload} disabled={uploading} data-testid="csv-upload-submit" className="bg-neutral-900 text-white">
                   {uploading ? "Uploading…" : "Upload"}
                 </Button>
@@ -192,9 +203,14 @@ export default function DataSources() {
                     {new Date(s.created_at).toLocaleString()}
                   </td>
                   <td className="px-5 py-3 text-right">
-                    <Link to={`/migrations/new?source=${s.id}`} className="inline-flex items-center gap-1 text-xs font-medium hover:underline mr-3" data-testid={`map-source-${s.id}`}>
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/migrations/new?source=${s.id}`)}
+                      className="inline-flex items-center gap-1 text-xs font-medium hover:underline mr-3"
+                      data-testid={`map-source-${s.id}`}
+                    >
                       Map <ArrowRight size={12} />
-                    </Link>
+                    </button>
                     <button onClick={() => handleDelete(s.id)} className="text-neutral-400 hover:text-rose-600" data-testid={`delete-source-${s.id}`}>
                       <Trash size={14} />
                     </button>

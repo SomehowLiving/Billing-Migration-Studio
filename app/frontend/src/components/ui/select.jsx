@@ -3,30 +3,74 @@ import React from "react";
 const SelectContext = React.createContext(null);
 
 export function Select({ value, onValueChange, children }) {
-  return <SelectContext.Provider value={{ value, onValueChange }}>{children}</SelectContext.Provider>;
-}
+  const [open, setOpen] = React.useState(false);
+  const rootRef = React.useRef(null);
 
-export function SelectTrigger({ className = "", children, ...props }) {
-  const { value, onValueChange } = React.useContext(SelectContext) || {};
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (rootRef.current && !rootRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
-    <select className={`w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm ${className}`} value={value} onChange={(e) => onValueChange?.(e.target.value)} {...props}>
-      {children}
-    </select>
+    <SelectContext.Provider value={{ value, onValueChange, open, setOpen }}>
+      <div ref={rootRef} className="relative">
+        {children}
+      </div>
+    </SelectContext.Provider>
   );
 }
 
-export function SelectContent({ children }) {
-  return <>{children}</>;
+export function SelectTrigger({ className = "", children, ...props }) {
+  const { open, setOpen } = React.useContext(SelectContext) || {};
+  return (
+    <button
+      type="button"
+      className={`flex w-full items-center justify-between rounded-xl border border-neutral-200 bg-white px-3 py-2.5 text-left text-sm shadow-sm transition hover:border-neutral-300 hover:bg-neutral-50 ${className}`}
+      onClick={() => setOpen?.((v) => !v)}
+      aria-expanded={open}
+      {...props}
+    >
+      {children}
+      <span className={`ml-3 inline-flex h-5 w-5 items-center justify-center rounded-full border border-neutral-200 text-[10px] text-neutral-500 transition ${open ? "rotate-180" : ""}`}>
+        ▾
+      </span>
+    </button>
+  );
 }
 
-export function SelectItem({ children, value, ...props }) {
+export function SelectContent({ children, className = "" }) {
+  const { open } = React.useContext(SelectContext) || {};
+  if (!open) return null;
   return (
-    <option value={value} {...props}>
+    <div className={`absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-lg ${className}`}>
+      <div className="max-h-64 overflow-y-auto py-1">{children}</div>
+    </div>
+  );
+}
+
+export function SelectItem({ children, value, className = "", ...props }) {
+  const { onValueChange, setOpen } = React.useContext(SelectContext) || {};
+  return (
+    <button
+      type="button"
+      className={`flex w-full items-center px-3 py-2 text-left text-sm hover:bg-neutral-100 ${className}`}
+      onClick={() => {
+        onValueChange?.(value);
+        setOpen?.(false);
+      }}
+      {...props}
+    >
       {children}
-    </option>
+    </button>
   );
 }
 
 export function SelectValue({ placeholder = "" }) {
-  return <option value="">{placeholder}</option>;
+  const { value } = React.useContext(SelectContext) || {};
+  return <span className={`truncate ${value ? "text-neutral-900" : "text-neutral-400"}`}>{value || placeholder}</span>;
 }

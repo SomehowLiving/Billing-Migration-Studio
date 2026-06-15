@@ -7,6 +7,7 @@ import io
 import csv
 import json
 import logging
+import jwt
 from datetime import datetime, timezone
 from typing import Optional, List, Dict, Any
 
