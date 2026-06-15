@@ -18,6 +18,23 @@ It validates, transforms, normalizes, and migrates billing records into a unifie
 
 The project simulates the workflow of Forward Deployed Engineers and Implementation Engineers responsible for onboarding enterprise customers onto modern billing platforms.
 
+## Architecture
+
+The product is split into a browser UI and a Python API:
+
+* `app/frontend` is a React app that handles login, source import, mapping, validation, migration runs, and onboarding views.
+* `app/backend` is a FastAPI service that owns authentication, source ingestion, schema inference, mapping templates, validation, migration execution, and reports.
+* Data is stored through SQLAlchemy models and accessed through API routes rather than direct frontend writes.
+* Stripe imports use live API access when configured and automatically fall back to deterministic demo data when the key is missing or unavailable.
+* Chargebee and internal source imports are demo connectors in this repo, which makes the full workflow testable without external dependencies.
+* Migration execution supports both dry-run and actual modes, with logs and reports generated from the same run record.
+
+### Runtime Notes
+
+* Local development uses `POSTGRES_URL` or SQLite fallback depending on the environment.
+* Demo login is seeded on backend startup.
+* The frontend expects the backend API to be reachable with credentials and CORS configured for the active origin.
+
 ---
 
 ## Quickstart
