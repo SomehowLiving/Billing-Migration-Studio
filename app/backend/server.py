@@ -649,7 +649,9 @@ app.include_router(api)
 
 cors_origins_raw = os.environ.get(
     "CORS_ORIGINS",
-    "http://localhost:3000,http://localhost:3001,http://127.0.0.1:3000,http://127.0.0.1:3001",
+    "http://localhost:3000,http://localhost:3001,http://127.0.0.1:3000,http://127.0.0.1:3001,"
+    "https://billing-migration-studio.vercel.app,"
+    "https://billing-migration-studio-backend.vercel.app",
 )
 allow_origins = [origin.strip() for origin in cors_origins_raw.split(",") if origin.strip()]
 allow_all_origins = "*" in allow_origins
