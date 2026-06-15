@@ -1,0 +1,4 @@
+email,name,external_id,plan,status,amount,currency,billing_frequency
+john@gmail.com,John Smith,cust_001,Pro,active,29,USD,monthly
+jane@gmail.com,Jane Doe,cust_002,Starter,active,19,USD,monthly
+sam@gmail.com,Sam Lee,cust_003,Enterprise,paused,499,USD,yearly

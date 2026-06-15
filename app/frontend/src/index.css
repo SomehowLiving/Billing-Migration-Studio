@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* fallback for Cabinet Grotesk (Fontshare) */
+@import url('https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,400,500,700,900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --background: 0 0% 100%;
+    --foreground: 240 6% 6%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 6% 6%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 6% 6%;
+    --primary: 240 6% 6%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 6% 6%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 36%;
+    --accent: 240 5% 96%;
+    --accent-foreground: 240 6% 6%;
+    --destructive: 350 89% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 217 91% 53%;
+    --radius: 0.375rem;
+}
+
+body {
+    margin: 0;
+    background: #fafafa;
+    color: #09090b;
+    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.font-display {
+    font-family: 'Cabinet Grotesk', 'IBM Plex Sans', sans-serif;
+    letter-spacing: -0.02em;
+}
+
+.font-mono {
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Subtle dotted grid background for hero/auth */
+.bg-grid {
+    background-image: radial-gradient(circle, #e4e4e7 1px, transparent 1px);
+    background-size: 24px 24px;
+}
+
+.bg-grid-dark {
+    background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+    background-size: 24px 24px;
+}
+
+@layer base {
+    * { @apply border-border; }
+    body { @apply bg-background text-foreground; }
+}
+
+/* Subtle scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #a1a1aa; }
+
+/* Status pills */
+.pill {
+    @apply inline-flex items-center gap-1.5 px-2 py-0.5 text-xs font-mono uppercase tracking-wider border;
+    border-radius: 4px;
+}
+.pill-success { background: #d1fae5; color: #065f46; border-color: #10b981; }
+.pill-error { background: #ffe4e6; color: #9f1239; border-color: #e11d48; }
+.pill-warning { background: #fef3c7; color: #92400e; border-color: #f59e0b; }
+.pill-info { background: #dbeafe; color: #1e40af; border-color: #3b82f6; }
+.pill-neutral { background: #f4f4f5; color: #3f3f46; border-color: #d4d4d8; }
+
+.dot { width: 6px; height: 6px; border-radius: 9999px; display: inline-block; }

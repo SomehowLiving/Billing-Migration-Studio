@@ -1,0 +1,125 @@
+{
+  "theme": "light",
+  "archetype": "4 (Swiss & High-Contrast)",
+  "typography": {
+    "headings": {
+      "font_family": "Cabinet Grotesk",
+      "weights": ["400", "700", "900"],
+      "usage": "Use tight letter spacing (tracking-tight) for large headings. Use font-black for top-level impact, font-normal for section headers."
+    },
+    "body": {
+      "font_family": "IBM Plex Sans",
+      "weights": ["400", "500", "600"],
+      "usage": "Use for all standard text, descriptions, and UI labels. Clear, technical, legible."
+    },
+    "monospace": {
+      "font_family": "JetBrains Mono",
+      "weights": ["400", "500"],
+      "usage": "Use for schema mapping fields, code snippets, IDs, and data preview cells."
+    },
+    "scale": {
+      "h1": "text-4xl sm:text-5xl font-black tracking-tighter",
+      "h2": "text-2xl sm:text-3xl font-bold tracking-tight",
+      "h3": "text-xl sm:text-2xl font-semibold tracking-tight",
+      "h4": "text-lg sm:text-xl font-medium",
+      "body": "text-sm sm:text-base leading-relaxed",
+      "small_labels": "text-xs font-semibold tracking-[0.2em] uppercase"
+    }
+  },
+  "colors": {
+    "background": {
+      "primary": "#FFFFFF",
+      "secondary": "#FAFAFA",
+      "tertiary": "#F4F4F5"
+    },
+    "surface": {
+      "card": "#FFFFFF",
+      "panel": "#FAFAFA",
+      "glass": "bg-white/70 backdrop-blur-xl backdrop-saturate-150"
+    },
+    "text": {
+      "primary": "#09090B",
+      "secondary": "#52525B",
+      "muted": "#A1A1AA",
+      "inverse": "#FFFFFF"
+    },
+    "border": {
+      "default": "#E4E4E7",
+      "hover": "#D4D4D8",
+      "active": "#09090B",
+      "focus": "#2563EB"
+    },
+    "primary": {
+      "DEFAULT": "#09090B",
+      "hover": "#27272A",
+      "foreground": "#FFFFFF"
+    },
+    "accent": {
+      "blue": "#2563EB",
+      "red": "#E11D48",
+      "yellow": "#F59E0B",
+      "green": "#10B981"
+    },
+    "status": {
+      "success": { "bg": "#D1FAE5", "text": "#065F46", "border": "#10B981" },
+      "error": { "bg": "#FFE4E6", "text": "#9F1239", "border": "#E11D48" },
+      "warning": { "bg": "#FEF3C7", "text": "#92400E", "border": "#F59E0B" },
+      "info": { "bg": "#DBEAFE", "text": "#1E40AF", "border": "#3B82F6" }
+    }
+  },
+  "layout": {
+    "spacing_scale": "Generous spacing. Use p-6 or p-8 for main cards/panels. Internal paddings around borders must prevent text collision.",
+    "dashboard_grid": "Grid Borders ('Technical' look). Use border-collapse logic for heavy data views. Main app layout: Side navigation (w-64) + Top Header (h-16) + Main Content Area.",
+    "cards": "Flat background, 1px solid subtle border (border-border), no shadow by default. On hover: -translate-y-1, shadow-lg, border-active.",
+    "panels": "Use Neumorphism ('Tactile') for small actionable widgets, but mix soft shadows with a sharp 1px border. High contrast text only.",
+    "mapping_interface": "Center canvas for visual schema mapping. Progressive disclosure for advanced fields. Use modular panels/cards for steps."
+  },
+  "components": {
+    "buttons": "Sharp corners or rounded-md. High contrast. Primary: solid black. Secondary: outline with solid border. Use data-testid on all.",
+    "inputs": "Shadcn components heavily customized to look crisp. 1px solid border. Focus state must use ring-2 ring-accent-blue.",
+    "tables": "Dense. border-b on rows. Use monospace font for IDs and data values. Sticky headers with backdrop-blur.",
+    "modals_dialogs": "Use Glassmorphism (bg-white/80 backdrop-blur-xl border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.12)]) for an optical clarity effect.",
+    "tabs": "Override default Shadcn h-9 to h-auto. Minimalist underline or solid pill styles.",
+    "toast": "Use Sonner. High contrast borders based on status."
+  },
+  "icons": {
+    "library": "@phosphor-icons/react",
+    "style": "duotone or regular, technical and dense."
+  },
+  "motion": {
+    "transitions": "transition-all duration-200 ease-in-out. Do not use 'transition: all' globally, target specific properties like 'transition-colors' or 'transition-transform'.",
+    "hover_states": "Buttons and links must explicitly change background and text color.",
+    "data_loading": "Use Skeleton loaders (Shadcn) with a subtle pulse. Avoid spinners for main content areas."
+  },
+  "media": {
+    "images": [
+      {
+        "url": "https://images.unsplash.com/photo-1454117096348-e4abbeba002c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MTJ8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMGdlb21ldHJpYyUyMGJhY2tncm91bmR8ZW58MHx8fHwxNzgxNTE5MDEwfDA&ixlib=rb-4.1.0&q=85",
+        "category": "auth_background",
+        "description": "Black and white abstract geometric wall, perfect for the login/register screen background to give a structural, technical feel."
+      },
+      {
+        "url": "https://images.pexels.com/photos/15863044/pexels-photo-15863044.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "category": "placeholder_source_logo",
+        "description": "Minimalist tech logo placeholder for data sources."
+      }
+    ],
+    "rules": "Never use placeholder URLs like via.placeholder.com. Ensure images have max-h constraints where appropriate."
+  },
+  "accessibility": {
+    "contrast": "Ensure minimum 4.5:1 for standard text. Use text shadow over images if needed.",
+    "focus": "All interactive elements must have visible focus rings. focus:ring-2 focus:ring-blue-600 focus:outline-none.",
+    "testing": "All interactive and key informational elements MUST include data-testid attribute (e.g., data-testid='run-migration-button')."
+  },
+  "instructions_to_main_agent": [
+    "Install required icon library: yarn add @phosphor-icons/react",
+    "Build the dashboard layout with a persistent sidebar and top navigation.",
+    "Create a robust Data Source Connection Wizard using clear, modular steps.",
+    "Develop the Schema Mapping Engine using a drag-and-drop or visual dropdown interface, applying JetBrains Mono for data fields.",
+    "Use Cabinet Grotesk for all major headings and IBM Plex Sans for body text.",
+    "Prioritize data density and clarity. Use borders to separate table cells and panel areas rather than soft shadows.",
+    "Ensure all Shadcn components (like dialogs, select, datepicker) are integrated properly rather than using raw HTML equivalents.",
+    "Include 'data-testid' on all buttons, forms, input fields, and key layout elements."
+  ]
+}
+

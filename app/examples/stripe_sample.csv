@@ -1,0 +1,4 @@
+email,name,plan,amount,currency,status
+alice@acme.com,Alice Cooper,Pro,49,USD,active
+bob@globex.com,Bob Stone,Starter,19,USD,active
+carol@initech.com,Carol Diaz,Enterprise,499,USD,active

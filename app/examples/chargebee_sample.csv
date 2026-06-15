@@ -1,0 +1,4 @@
+customer_email,first_name,last_name,subscription_tier,billing_period,plan_amount,plan_currency,subscription_status
+lara@chargebee-demo.com,Lara,Mendes,Growth,month,79,USD,active
+marco@chargebee-demo.com,Marco,Singh,Scale,month,249,USD,active
+nina@chargebee-demo.com,Nina,Park,Starter,year,19,EUR,active
