@@ -41,28 +41,36 @@ def create_refresh_token(user_id: str) -> str:
     }
     return jwt.encode(payload, _secret(), algorithm=JWT_ALGORITHM)
 
-
 def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
     token = request.cookies.get("access_token")
-    if not token:
-        auth_header = request.headers.get("Authorization", "")
-        if auth_header.startswith("Bearer "):
-            token = auth_header[7:]
+
+    print("TOKEN EXISTS:", bool(token))
+
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
+
     try:
         payload = jwt.decode(token, _secret(), algorithms=[JWT_ALGORITHM])
-        if payload.get("type") != "access":
-            raise HTTPException(status_code=401, detail="Invalid token type")
+
+        print("PAYLOAD:", payload)
+
         user = db.query(User).filter(User.id == payload["sub"]).first()
+
+        print("USER FOUND:", user is not None)
+
         if not user:
             raise HTTPException(status_code=401, detail="User not found")
-        return user
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token expired")
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
 
+        return user
+
+    except jwt.ExpiredSignatureError:
+        print("TOKEN EXPIRED")
+        raise HTTPException(status_code=401, detail="Token expired")
+
+    except jwt.InvalidTokenError as e:
+        print("INVALID TOKEN:", str(e))
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
 
 def seed_admin(db: Session):
     admin_email = os.environ.get("ADMIN_EMAIL", "admin@example.com")
