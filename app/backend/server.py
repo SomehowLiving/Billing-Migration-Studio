@@ -119,10 +119,26 @@ class MigrationRunOut(BaseModel):
 
 # ---------- Auth ----------
 def _set_auth_cookies(response: Response, access: str, refresh: str):
-    response.set_cookie("access_token", access, httponly=True, secure=False, samesite="lax", max_age=43200, path="/")
-    response.set_cookie("refresh_token", refresh, httponly=True, secure=False, samesite="lax", max_age=604800, path="/")
+    response.set_cookie(
+        "access_token",
+        access,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        max_age=43200,
+        path="/",
+    )
 
-
+    response.set_cookie(
+        "refresh_token",
+        refresh,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        max_age=604800,
+        path="/",
+    )
+    
 @api.post("/auth/register", response_model=UserOut)
 def register(payload: RegisterIn, response: Response, db: Session = Depends(get_db)):
     email = payload.email.lower().strip()
@@ -157,23 +173,26 @@ def logout(response: Response):
     response.delete_cookie("refresh_token", path="/")
     return {"ok": True}
 
-
 @api.get("/auth/session")
 def session(request: Request, db: Session = Depends(get_db)):
-    token = request.cookies.get("access_token")
-    if not token:
-        return {"authenticated": False, "user": None}
     try:
-        payload = jwt.decode(token, _secret(), algorithms=[JWT_ALGORITHM])
-        if payload.get("type") != "access":
-            return {"authenticated": False, "user": None}
-        user = db.query(User).filter(User.id == payload["sub"]).first()
-        if not user:
-            return {"authenticated": False, "user": None}
-        return {"authenticated": True, "user": UserOut.model_validate(user)}
-    except jwt.InvalidTokenError:
-        return {"authenticated": False, "user": None}
+        user = get_current_user(request, db)
 
+        return {
+            "authenticated": True,
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "name": user.name,
+                "role": user.role,
+            },
+        }
+
+    except HTTPException:
+        return {
+            "authenticated": False,
+            "user": None,
+        }
 
 @api.get("/auth/me", response_model=UserOut)
 def me(user: User = Depends(get_current_user)):
