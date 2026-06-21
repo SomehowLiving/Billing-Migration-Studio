@@ -1,7 +1,8 @@
-
-
 # Billing Migration Studio
 
+[![Billing Migration Studio Demo](demo-thumbnail.png)](https://raw.githubusercontent.com/SomehowLiving/Billing-Migration-Studio/main/bms-demo.mp4)
+
+Click the image above to watch the demo.
 ## Overview
 
 Billing Migration Studio is a customer onboarding and billing-data migration platform designed for SaaS implementation teams.
